@@ -1,0 +1,188 @@
+# LibreChat config for Render (free plan), personal use, every feature switched on.
+# Schema reference: https://www.librechat.ai/docs/configuration/librechat_yaml
+# ${VAR} values are read from the Render environment variables, so no secret lives in this file.
+
+version: 1.3.17
+cache: true
+
+# Chat Projects (like ChatGPT Projects): shared files + instructions per project
+projects:
+  maxFiles: 50
+  maxInstructionsLength: 16000
+  maxDescriptionLength: 1000
+
+interface:
+  customWelcome: '你好，今天想聊点什么？'
+  modelSelect: true
+  parameters: true
+  presets: true
+  bookmarks: true
+  multiConvo: true
+  memories: true
+  temporaryChat: true
+  runCode: true
+  webSearch: true
+  fileSearch: true
+  fileCitations: true
+  contextUsage: true
+  contextCost: true
+  artifactUndocking: true
+  feedback: true
+  mascot: true
+  prompts:
+    use: true
+    create: true
+    share: true
+    public: true
+  agents:
+    use: true
+    create: true
+    share: true
+    public: true
+  skills:
+    use: true
+    create: true
+    share: true
+    public: true
+  mcpServers:
+    use: true
+    create: true
+    share: true
+    public: true
+  sharedLinks:
+    create: true
+    share: true
+    public: true
+    snapshotFiles: true
+  marketplace:
+    use: true
+  remoteAgents:
+    use: true
+    create: true
+    share: true
+    public: true
+  # Scheduled chats (experimental). Needs SCHEDULES_SINGLE_PROCESS=true without Redis.
+  # Note: on the free plan the service sleeps when idle, so a schedule only fires while it is awake.
+  schedules:
+    use: true
+    create: true
+    maxPerUser: 10
+    minIntervalMinutes: 60
+  defaultPinnedTools:
+    - 'web_search'
+    - 'artifacts'
+    - 'file_search'
+    - 'execute_code'
+    - 'mcp'
+
+registration:
+  socialLogins: []
+
+# Long-term memory (like ChatGPT Memory): an agent reads recent turns and keeps facts about you.
+memory:
+  disabled: false
+  personalize: true
+  tokenLimit: 10000
+  messageWindowSize: 5
+  agent:
+    enabled: true
+    provider: 'openAI'
+    model: 'gpt-5.4-mini'
+
+# Summarize old turns so long conversations keep working
+summarization:
+  enabled: true
+  provider: 'openAI'
+  model: 'gpt-5.4-mini'
+  retainRecent:
+    turns: 2
+    tokens: 2000
+
+# Web search: Keenable needs no API key for search or scraping (rate-limited public endpoints).
+# Add KEENABLE_API_KEY in Render to lift the limits.
+webSearch:
+  searchProvider: keenable
+  scraperProvider: keenable
+  rerankerType: none
+  keenableSearchOptions:
+    maxResults: 8
+
+# Voice: read answers aloud and dictate messages, both through OpenAI
+speech:
+  tts:
+    openai:
+      apiKey: '${OPENAI_API_KEY}'
+      model: 'gpt-4o-mini-tts'
+      voices: ['alloy', 'ash', 'coral', 'echo', 'fable', 'nova', 'onyx', 'sage', 'shimmer']
+  stt:
+    openai:
+      apiKey: '${OPENAI_API_KEY}'
+      model: 'gpt-4o-mini-transcribe'
+  speechTab:
+    conversationMode: true
+    advancedMode: true
+    speechToText:
+      engineSTT: 'external'
+    textToSpeech:
+      engineTTS: 'external'
+      voice: 'alloy'
+
+# Keep uploads small: the free instance has 512 MB of memory
+fileConfig:
+  serverFileSizeLimit: 20
+  avatarSizeLimit: 2
+  endpoints:
+    agents:
+      fileLimit: 10
+      fileSizeLimit: 20
+      totalSizeLimit: 50
+    default:
+      fileLimit: 10
+      fileSizeLimit: 20
+      totalSizeLimit: 50
+
+# MCP servers: add your own from the UI (Settings > MCP). A keyless example:
+mcpServers:
+  deepwiki:
+    type: streamable-http
+    url: https://mcp.deepwiki.com/mcp
+    timeout: 60000
+
+endpoints:
+  agents:
+    recursionLimit: 50
+    maxRecursionLimit: 100
+    titleTiming: immediate
+    maxCitations: 30
+    maxCitationsPerFile: 7
+    minRelevanceScore: 0.45
+    # Every built-in capability (code execution needs LIBRECHAT_CODE_API_KEY; OCR needs a Mistral key)
+    capabilities:
+      - 'deferred_tools'
+      - 'execute_code'
+      - 'file_search'
+      - 'web_search'
+      - 'artifacts'
+      - 'subagents'
+      - 'actions'
+      - 'context'
+      - 'skills'
+      - 'memory'
+      - 'ask_user_question'
+      - 'tools'
+      - 'ocr'
+      - 'programmatic_tools'
+      - 'run_in_background'
+
+  # Second OpenAI key (the "free" one from your old NextChat site).
+  # The built-in OpenAI endpoint uses OPENAI_API_KEY (the paid key).
+  custom:
+    - name: 'OpenAI Free'
+      apiKey: '${OPENAI_FREE_API_KEY}'
+      baseURL: 'https://api.openai.com/v1'
+      models:
+        default: ['gpt-5.4', 'gpt-5.4-mini']
+        fetch: true
+      titleConvo: true
+      titleModel: 'gpt-5.4-mini'
+      modelDisplayLabel: 'OpenAI (Free Key)'
