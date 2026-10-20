@@ -13,7 +13,7 @@ projects:
 
 interface:
   customWelcome: '你好，今天想聊点什么？'
-  modelSelect: true
+  modelSelect: false
   parameters: true
   presets: true
   bookmarks: true
@@ -148,6 +148,245 @@ mcpServers:
     url: https://mcp.deepwiki.com/mcp
     timeout: 60000
 
+# Model menu: only models your keys can use, split by key. Every spec uses the Responses API
+# (gpt-5.6 / gpt-6 reject tools + reasoning on Chat Completions).
+modelSpecs:
+  enforce: true
+  prioritize: true
+  addedEndpoints: ['agents']
+  list:
+    - name: 'paid-gpt-6-luna'
+      label: 'GPT-6 Luna'
+      description: '付费 Key · in $0.10 / out $0.50 — 默认，便宜快速'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 1
+      default: true
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-6-luna'
+        useResponsesApi: true
+    - name: 'paid-gpt-6-sol'
+      label: 'GPT-6 Sol'
+      description: '付费 Key · in $2 / out $10'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 2
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-6-sol'
+        useResponsesApi: true
+    - name: 'paid-gpt-6.1-sol'
+      label: 'GPT-6.1 Sol'
+      description: '付费 Key · in $2 / out $10'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 3
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-6.1-sol'
+        useResponsesApi: true
+    - name: 'paid-gpt-6-astra'
+      label: 'GPT-6 Astra'
+      description: '付费 Key · in $10 / out $50 — 最强'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 4
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-6-astra'
+        useResponsesApi: true
+    - name: 'paid-gpt-5.6-sol'
+      label: 'GPT-5.6 Sol'
+      description: '付费 Key · in $4 / out $20'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 5
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-5.6-sol'
+        useResponsesApi: true
+    - name: 'paid-gpt-5.6-terra'
+      label: 'GPT-5.6 Terra'
+      description: '付费 Key · in $2 / out $12'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 6
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-5.6-terra'
+        useResponsesApi: true
+    - name: 'paid-gpt-5.6-luna'
+      label: 'GPT-5.6 Luna'
+      description: '付费 Key · in $0.20 / out $1.20'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 7
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-5.6-luna'
+        useResponsesApi: true
+    - name: 'paid-gpt-5.5'
+      label: 'GPT-5.5'
+      description: '付费 Key · in $5 / out $30'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 8
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-5.5'
+        useResponsesApi: true
+    - name: 'paid-gpt-5.4'
+      label: 'GPT-5.4'
+      description: '付费 Key · in $2.50 / out $15'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 9
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-5.4'
+        useResponsesApi: true
+    - name: 'paid-gpt-5.4-mini'
+      label: 'GPT-5.4 mini'
+      description: '付费 Key · in $0.75 / out $4.50'
+      group: '付费 Key'
+      groupIcon: 'openAI'
+      order: 10
+      preset:
+        endpoint: 'openAI'
+        model: 'gpt-5.4-mini'
+        useResponsesApi: true
+    - name: 'free-gpt-5.4'
+      label: 'gpt-5.4 (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 11
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-5.4'
+        useResponsesApi: true
+    - name: 'free-gpt-5.2'
+      label: 'gpt-5.2 (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 12
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-5.2'
+        useResponsesApi: true
+    - name: 'free-gpt-5.1'
+      label: 'gpt-5.1 (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 13
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-5.1'
+        useResponsesApi: true
+    - name: 'free-gpt-5'
+      label: 'gpt-5 (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 14
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-5'
+        useResponsesApi: true
+    - name: 'free-o3'
+      label: 'o3 (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 15
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'o3'
+        useResponsesApi: true
+    - name: 'free-gpt-4.1'
+      label: 'gpt-4.1 (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 16
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-4.1'
+        useResponsesApi: true
+    - name: 'free-gpt-4o'
+      label: 'gpt-4o (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 17
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-4o'
+        useResponsesApi: true
+    - name: 'free-gpt-5.4-mini'
+      label: 'gpt-5.4-mini (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 18
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-5.4-mini'
+        useResponsesApi: true
+    - name: 'free-gpt-5-mini'
+      label: 'gpt-5-mini (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 19
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-5-mini'
+        useResponsesApi: true
+    - name: 'free-o4-mini'
+      label: 'o4-mini (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 20
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'o4-mini'
+        useResponsesApi: true
+    - name: 'free-gpt-4.1-mini'
+      label: 'gpt-4.1-mini (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 21
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-4.1-mini'
+        useResponsesApi: true
+    - name: 'free-gpt-4o-mini'
+      label: 'gpt-4o-mini (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 22
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-4o-mini'
+        useResponsesApi: true
+    - name: 'free-gpt-5.4-nano'
+      label: 'gpt-5.4-nano (免费)'
+      description: '免费 Key · OpenAI 免费额度内的模型'
+      group: '免费 Key'
+      groupIcon: 'openAI'
+      order: 23
+      preset:
+        endpoint: 'OpenAI Free'
+        model: 'gpt-5.4-nano'
+        useResponsesApi: true
+
 endpoints:
   agents:
     recursionLimit: 50
@@ -181,8 +420,8 @@ endpoints:
       apiKey: '${OPENAI_FREE_API_KEY}'
       baseURL: 'https://api.openai.com/v1'
       models:
-        default: ['gpt-5.4', 'gpt-5.4-mini']
-        fetch: true
+        default: ['gpt-5.4', 'gpt-5.2', 'gpt-5.1', 'gpt-5', 'o3', 'gpt-4.1', 'gpt-4o', 'gpt-5.4-mini', 'gpt-5-mini', 'o4-mini', 'gpt-4.1-mini', 'gpt-4o-mini', 'gpt-5.4-nano']
+        fetch: false
       titleConvo: true
       titleModel: 'gpt-5.4-mini'
       modelDisplayLabel: 'OpenAI (Free Key)'
