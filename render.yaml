@@ -1,0 +1,171 @@
+# Render Blueprint: LibreChat + Meilisearch (chat search) + RAG API (file search), all on the free plan.
+# Database: MongoDB Atlas free M0 cluster (chats, users, memories, and the RAG vectors).
+# Setup guide: deploy/render/README.zh.md
+#
+# If Render gives a service a URL with an extra suffix (because the name is taken),
+# update DOMAIN_CLIENT / DOMAIN_SERVER / MEILI_HOST / RAG_API_URL to the real URLs.
+
+services:
+  # ---------- 1. LibreChat (main app) ----------
+  - type: web
+    name: yongjie-librechat
+    runtime: docker
+    plan: free
+    region: oregon
+    dockerfilePath: ./deploy/render/Dockerfile
+    dockerContext: ./deploy/render
+    healthCheckPath: /health
+    envVars:
+      - key: HOST
+        value: 0.0.0.0
+      - key: PORT
+        value: 3080
+      - key: NODE_ENV
+        value: production
+      - key: DOMAIN_CLIENT
+        value: https://yongjie-librechat.onrender.com
+      - key: DOMAIN_SERVER
+        value: https://yongjie-librechat.onrender.com
+      - key: TRUST_PROXY
+        value: 1
+      - key: NO_INDEX
+        value: "true"
+      - key: APP_TITLE
+        value: LibreChat
+
+      # Database (MongoDB Atlas connection string, mongodb+srv://...)
+      - key: MONGO_URI
+        sync: false
+
+      # Secrets. CREDS_KEY = 64 hex chars, CREDS_IV = 32 hex chars (see the guide).
+      - key: CREDS_KEY
+        sync: false
+      - key: CREDS_IV
+        sync: false
+      - key: JWT_SECRET
+        generateValue: true
+      - key: JWT_REFRESH_SECRET
+        generateValue: true
+
+      # Model keys
+      - key: OPENAI_API_KEY          # paid key (built-in OpenAI endpoint, memory, voice)
+        sync: false
+      - key: OPENAI_FREE_API_KEY     # free key ("OpenAI Free" endpoint)
+        sync: false
+      - key: IMAGE_GEN_OAI_API_KEY   # image generation tool, same value as OPENAI_API_KEY
+        sync: false
+      - key: ANTHROPIC_API_KEY       # user_provided = paste a key in the UI if you want Claude
+        value: user_provided
+      - key: GOOGLE_KEY              # user_provided = paste a key in the UI if you want Gemini
+        value: user_provided
+
+      # Accounts: register yourself first, then set ALLOW_REGISTRATION=false
+      - key: ALLOW_REGISTRATION
+        value: "true"
+      - key: ALLOW_EMAIL_LOGIN
+        value: "true"
+      - key: ALLOW_UNVERIFIED_EMAIL_LOGIN
+        value: "true"
+      - key: ALLOW_SOCIAL_LOGIN
+        value: "false"
+      - key: ALLOW_SOCIAL_REGISTRATION
+        value: "false"
+      - key: ALLOW_PASSWORD_RESET
+        value: "false"
+
+      # Share links
+      - key: ALLOW_SHARED_LINKS
+        value: "true"
+      - key: ALLOW_SHARED_LINKS_PUBLIC
+        value: "true"
+
+      # Scheduled chats without Redis
+      - key: SCHEDULES_SINGLE_PROCESS
+        value: "true"
+
+      # Chat search (Meilisearch service below)
+      - key: SEARCH
+        value: "true"
+      - key: MEILI_NO_ANALYTICS
+        value: "true"
+      - key: MEILI_HOST
+        value: https://yongjie-librechat-meili.onrender.com
+      - key: MEILI_MASTER_KEY
+        fromService:
+          type: web
+          name: yongjie-librechat-meili
+          envVarKey: MEILI_MASTER_KEY
+
+      # File search / RAG (RAG API service below)
+      - key: RAG_API_URL
+        value: https://yongjie-librechat-rag.onrender.com
+
+      - key: DEBUG_LOGGING
+        value: "false"
+
+  # ---------- 2. Meilisearch (search across all chats) ----------
+  - type: web
+    name: yongjie-librechat-meili
+    runtime: image
+    plan: free
+    region: oregon
+    image:
+      url: docker.io/getmeili/meilisearch:v1.35.1
+    healthCheckPath: /health
+    envVars:
+      - key: MEILI_MASTER_KEY
+        generateValue: true
+      - key: MEILI_ENV
+        value: production
+      - key: MEILI_NO_ANALYTICS
+        value: "true"
+      - key: MEILI_HTTP_ADDR
+        value: 0.0.0.0:7700
+      - key: PORT
+        value: 7700
+      - key: MEILI_MAX_INDEXING_MEMORY
+        value: 150Mb
+
+  # ---------- 3. RAG API (chat with your files) ----------
+  - type: web
+    name: yongjie-librechat-rag
+    runtime: image
+    plan: free
+    region: oregon
+    image:
+      url: registry.librechat.ai/librechat-ai/librechat-rag-api-dev-lite:latest
+    healthCheckPath: /health
+    envVars:
+      - key: RAG_HOST
+        value: 0.0.0.0
+      - key: RAG_PORT
+        value: 8000
+      - key: PORT
+        value: 8000
+      # Vectors live in the same Atlas cluster, in their own collection
+      - key: VECTOR_DB_TYPE
+        value: atlas-mongo
+      - key: ATLAS_MONGO_DB_URI
+        fromService:
+          type: web
+          name: yongjie-librechat
+          envVarKey: MONGO_URI
+      - key: COLLECTION_NAME
+        value: rag_vectors
+      - key: ATLAS_SEARCH_INDEX
+        value: vector_index
+      - key: EMBEDDINGS_PROVIDER
+        value: openai
+      - key: EMBEDDINGS_MODEL
+        value: text-embedding-3-small
+      - key: RAG_OPENAI_API_KEY
+        fromService:
+          type: web
+          name: yongjie-librechat
+          envVarKey: OPENAI_API_KEY
+      # Must match LibreChat's JWT_SECRET so only your LibreChat can call this API
+      - key: JWT_SECRET
+        fromService:
+          type: web
+          name: yongjie-librechat
+          envVarKey: JWT_SECRET
