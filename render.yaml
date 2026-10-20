@@ -54,14 +54,16 @@ services:
         sync: false
       - key: IMAGE_GEN_OAI_API_KEY   # image generation tool, same value as OPENAI_API_KEY
         sync: false
+      - key: OPENAI_MODELS           # models the paid key may use (menu: deploy/render/librechat.yaml modelSpecs)
+        value: gpt-6-luna,gpt-6-sol,gpt-6.1-sol,gpt-6-astra,gpt-5.6-sol,gpt-5.6-terra,gpt-5.6-luna,gpt-5.5,gpt-5.4,gpt-5.4-mini
       - key: ANTHROPIC_API_KEY       # user_provided = paste a key in the UI if you want Claude
         value: user_provided
       - key: GOOGLE_KEY              # user_provided = paste a key in the UI if you want Gemini
         value: user_provided
 
-      # Accounts: register yourself first, then set ALLOW_REGISTRATION=false
+      # Accounts: registration closed (owner account already created)
       - key: ALLOW_REGISTRATION
-        value: "true"
+        value: "false"
       - key: ALLOW_EMAIL_LOGIN
         value: "true"
       - key: ALLOW_UNVERIFIED_EMAIL_LOGIN
