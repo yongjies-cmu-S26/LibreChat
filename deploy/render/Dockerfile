@@ -1,6 +1,6 @@
-# Render image: the official LibreChat release plus this repo's librechat.yaml.
+# Render image: the official LibreChat dev build (has Projects; v0.8.8 does not) plus this repo's librechat.yaml.
 # Pulling the prebuilt image avoids building the frontend on Render, which needs far more than 512 MB.
-FROM registry.librechat.ai/librechat-ai/librechat:v0.8.8
+FROM registry.librechat.ai/librechat-ai/librechat-dev:latest
 
 COPY --chown=node:node librechat.yaml /app/librechat.yaml
 
